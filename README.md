@@ -22,11 +22,8 @@ scBridge provides reliable bidirectional conversion between Seurat (R) and AnnDa
 ### From Source
 
 ```r
-# Install from local directory
-install.packages("H:/path/to/scBridge", repos = NULL, type = "source")
-
-# Or using devtools
-devtools::install("H:/path/to/scBridge")
+# using github
+remotes::install_github("xiaoqqjun/scBridge")
 ```
 
 ### Dependencies
