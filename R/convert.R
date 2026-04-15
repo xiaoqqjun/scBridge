@@ -28,19 +28,32 @@ seurat2py <- function(object, file, slots = c("counts", "data"),
 #' Convert h5ad File to Seurat Object
 #'
 #' One-step conversion from h5ad to Seurat format.
+#' Idents are automatically set to seurat_clusters if available, otherwise orig.ident.
 #'
 #' @param file Input h5ad file path.
 #' @param verbose Logical, print progress messages. Default TRUE.
+#' @param set_idents Logical, automatically set Idents (default TRUE). If FALSE, use orig.ident.
 #' @return A Seurat object.
 #' @export
 #' @examples
 #' \dontrun{
 #' sobj <- py2seurat("input.h5ad")
 #' DimPlot(sobj, reduction = "umap")
+#'
+#' # Disable automatic Idents setting
+#' sobj <- py2seurat("input.h5ad", set_idents = FALSE)
+#' Idents(sobj) <- "custom_column"
 #' }
-py2seurat <- function(file, verbose = TRUE) {
+py2seurat <- function(file, verbose = TRUE, set_idents = TRUE) {
   bridge_dir <- h5ad_to_bridge(file, bridge_dir = NULL, verbose = verbose)
   sobj <- bridge_to_seurat(bridge_dir, verbose = verbose)
+
+  # 如果禁用了自动设置 Idents，设置为 orig.ident
+  if (!set_idents && "orig.ident" %in% colnames(sobj@meta.data)) {
+    Idents(sobj) <- "orig.ident"
+    if (verbose) message("  Idents set to: orig.ident")
+  }
+
   unlink(bridge_dir, recursive = TRUE)
   if (verbose) message("Temp files cleaned.")
   return(sobj)

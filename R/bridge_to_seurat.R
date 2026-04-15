@@ -111,6 +111,36 @@ bridge_to_seurat <- function(bridge_dir, verbose = TRUE) {
     if (verbose) message("  Variable features: ", length(var_features))
   }
 
+  # 8. 自动设置 Idents
+  # 按优先级选择：seurat_clusters > orig.ident > 第一个非自动生成的列
+  idents_cols <- c("seurat_clusters", "orig.ident")
+  meta_cols <- colnames(sobj@meta.data)
+
+  # 找到合适的列
+  idents_col <- NULL
+  for (col in idents_cols) {
+    if (col %in% meta_cols) {
+      idents_col <- col
+      break
+    }
+  }
+
+  # 如果没有找到，选择第一个非自动生成的列
+  if (is.null(idents_col)) {
+    auto_cols <- c("orig.ident", "nCount_RNA", "nFeature_RNA", "nFeature_Spatial",
+                    "percent.mt", "percent.ribo", "percent hb")
+    non_auto_cols <- meta_cols[!meta_cols %in% auto_cols]
+    if (length(non_auto_cols) > 0) {
+      idents_col <- non_auto_cols[1]
+    }
+  }
+
+  # 设置 Idents
+  if (!is.null(idents_col)) {
+    Idents(sobj) <- idents_col
+    if (verbose) message("  Idents set to: ", idents_col)
+  }
+
   if (verbose) message("=== Import complete ===")
   return(sobj)
 }

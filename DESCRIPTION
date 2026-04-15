@@ -1,7 +1,7 @@
 
 Package: scBridge
 Title: Seamless Conversion Between Seurat and AnnData Objects
-Version: 0.2.1
+Version: 0.2.2
 Authors@R: person("Zhijun", "Feng", email = "xiaoqqjun@sina.com",
     role = c("aut", "cre"), comment = c(ORCID = "0000-0003-1813-1669"))
 Description: Provides reliable bidirectional conversion between Seurat (R) and
